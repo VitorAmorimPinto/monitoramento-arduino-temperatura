@@ -9,6 +9,7 @@
 byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
 IPAddress ip(192, 168, 25, 16);
 EthernetServer server(8080);
+int envia = 1;
 
 void setup() {
     Serial.begin(9600);
@@ -16,12 +17,21 @@ void setup() {
     Ethernet.begin(mac, ip);
     server.begin();
     initializeDS1621();
-    enviarAlerta();
 }
 
 void loop() {
   float temperature = lerTemperatura();
-
+    if(temperature > 8.0 && envia == 1){
+      enviarAlerta();
+        envia = 0;
+    }
+    else if(temperature < 2.0 && envia == 1){
+        enviarAlerta();
+        envia = 0;
+    }
+    else if(temperature >= 2 && temperature <= 8){
+        envia = 1;
+    }
   String req_str;
   EthernetClient client = server.available();
   if (client) {
@@ -74,7 +84,6 @@ void initializeDS1621() {
   Wire.endTransmission();
 }
 void enviarAlerta() {
-  Serial.println("Alerta Enviado");
   EthernetClient client;
   if (client.connect("127.0.0.1", 8686)) {
     client.print("GET /alertar HTTP/1.1\r\n");
