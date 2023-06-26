@@ -47,9 +47,6 @@ void loop() {
           unsigned int posicao_final = req_str.indexOf("HTTP/") - 1;
           String parametro = req_str.substring(posicao_inicial, posicao_final);
 
-          if (parametro != "/favicon.ico") {
-          }
-
           if (parametro.indexOf("temperatura") > -1) {
             // Construir a resposta JSON
             float temperature = lerTemperatura();
